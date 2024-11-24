@@ -9,6 +9,7 @@
   <name>Kotlin testing functions</name>
   <description>Functions to simplify testing of Kotlin projects</description>
   <packaging>jar</packaging>
+  <url>https://github.com/pwall567/should-test</url>
 
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
