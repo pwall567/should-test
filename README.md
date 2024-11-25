@@ -7,9 +7,29 @@
 
 Kotlin testing functions
 
+## Background
+
+A while ago, someone introduced me to a testing library that used the syntax:
+```kotlin
+    testValue shouldBe expectedvalue
+```
+This seemed like a great idea, and good use of the capabilities of Kotlin.
+
+But then I encountered a problem where my test result was not just the wrong value, but the wrong type, and the
+`shouldBe` function call had compiled without error.
+So I tried replacing the `shouldBe` calls with the standard `kotlin.test` functions `expect` and `assertEquals`, and
+sure enough, the IDE showed the calls as being in error when the tests used the wrong types.
+
+That shook my confidence in that library, and I went back to using the `kotlin.test` functions, but the idea never
+completely went away.
+This library is an attempt to provide testing functions with an attractive syntax, but also retaining the strong typing
+of the official Kotlin libraries.
+And as a bonus, the library is very simple and lightweight &ndash; the main source file consists of fewer than 250 lines
+(including comments).
+
 ## Dependency Specification
 
-The latest version of the library is 1.0, and it may be obtained from the Maven Central repository.
+The latest version of the library is 2.0, and it may be obtained from the Maven Central repository.
 (The following dependency declarations assume that the library will be included for test purposes; this is
 expected to be its principal use.)
 
@@ -18,19 +38,19 @@ expected to be its principal use.)
     <dependency>
       <groupId>io.kstuff</groupId>
       <artifactId>should-test</artifactId>
-      <version>1.0</version>
+      <version>2.0</version>
       <scope>test</scope>
     </dependency>
 ```
 ### Gradle
 ```groovy
-    testImplementation 'io.kstuff:should-test:1.0'
+    testImplementation 'io.kstuff:should-test:2.0'
 ```
 ### Gradle (kts)
 ```kotlin
-    testImplementation("io.kstuff:should-test:1.0")
+    testImplementation("io.kstuff:should-test:2.0")
 ```
 
 Peter Wall
 
-2024-11-24
+2024-11-26

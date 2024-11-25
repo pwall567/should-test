@@ -54,7 +54,7 @@ class TestFunctionsTest {
         assertFailsWith<AssertionError> { value4 shouldBe true }.let {
             assertEquals("Value should be true, was false", it.message)
         }
-        assertFailsWith<AssertionError> { value1 shouldBe null }.let {
+        assertFailsWith<AssertionError> { value6 shouldBe null }.let {
             assertEquals("Value should be null, was 12345", it.message)
         }
     }
@@ -80,7 +80,7 @@ class TestFunctionsTest {
     @Test fun `should perform shouldNotBe`() {
         value1 shouldNotBe 12346
         value2 shouldNotBe "Wrong"
-        value1 shouldNotBe null
+        value6 shouldNotBe null
     }
 
     @Suppress("ComplexRedundantLet")
@@ -219,6 +219,86 @@ class TestFunctionsTest {
         }
     }
 
+    @Test fun `should perform shouldMatch`() {
+        value2 shouldMatch Regex("^T")
+    }
+
+    @Suppress("ComplexRedundantLet")
+    @Test fun `should throw AssertionError when shouldMatch fails`() {
+        assertFailsWith<AssertionError> { value2 shouldMatch Regex("^X") }.let {
+            assertEquals("String should match regex ^X, was \"Test string\"", it.message)
+        }
+    }
+
+    @Test fun `should perform shouldNotMatch`() {
+        value2 shouldNotMatch Regex("^X")
+    }
+
+    @Suppress("ComplexRedundantLet")
+    @Test fun `should throw AssertionError when shouldNotMatch fails`() {
+        assertFailsWith<AssertionError> { value2 shouldNotMatch Regex("^T") }.let {
+            assertEquals("String should not match regex ^T, was \"Test string\"", it.message)
+        }
+    }
+
+    @Test fun `should perform shouldBeSameInstance`() {
+        val temp = value2
+        temp shouldBeSameInstance value2
+    }
+
+    @Suppress("ComplexRedundantLet")
+    @Test fun `should throw AssertionError when shouldBeSameInstance fails`() {
+        val temp = buildString { append(value2) }
+        assertFailsWith<AssertionError> { temp shouldBeSameInstance value2 }.let {
+            assertEquals("Value should be same instance as \"Test string\", was \"Test string\"", it.message)
+        }
+    }
+
+    @Test fun `should perform shouldNotBeSameInstance`() {
+        val temp = buildString { append(value2) }
+        temp shouldNotBeSameInstance value2
+    }
+
+    @Suppress("ComplexRedundantLet")
+    @Test fun `should throw AssertionError when shouldNotBeSameInstance fails`() {
+        val temp = value2
+        assertFailsWith<AssertionError> { temp shouldNotBeSameInstance value2 }.let {
+            assertEquals("Value should not be same instance as \"Test string\"", it.message)
+        }
+    }
+
+    @Test fun `should perform shouldThrow`() {
+        shouldThrow<NumberFormatException> { "bad".toInt() }
+    }
+
+    @Test fun `should throw AssertionError when shouldThrow fails`() {
+        assertFailsWith<AssertionError> { shouldThrow<NumberFormatException> { "123".toInt() } }
+    }
+
+    @Test fun `should perform shouldBeNonNull`() {
+        value6.shouldBeNonNull() shouldBe 12345
+    }
+
+    @Suppress("ComplexRedundantLet")
+    @Test fun `should throw AssertionError when shouldBeNonNull fails`() {
+        assertFailsWith<AssertionError> { value5.shouldBeNonNull() }.let {
+            assertEquals("Value should not be null", it.message)
+        }
+    }
+
+    @Test fun `should perform shouldBeType`() {
+        val temp: Number = value1
+        temp.shouldBeType<Int>() shouldBe 12345
+    }
+
+    @Suppress("ComplexRedundantLet")
+    @Test fun `should throw AssertionError when shouldBeType fails`() {
+        val temp: Number = value1
+        assertFailsWith<AssertionError> { temp.shouldBeType<Long>() }.let {
+            assertEquals("Value should be Long, was Int", it.message)
+        }
+    }
+
     @Suppress("ConstPropertyName")
     companion object {
 
@@ -227,6 +307,8 @@ class TestFunctionsTest {
         const val value3 = true
         const val value4 = false
         val value5: String? = null
+        @Suppress("RedundantNullableReturnType")
+        val value6: Int? = 12345
         val list1 = listOf("alpha", "beta", "gamma")
         val map1 = mapOf("first" to "alpha", "second" to "beta", "third" to "gamma")
 
