@@ -1,5 +1,5 @@
 /*
- * @(#) TestFunctions.kt
+ * @(#) GenericTests.kt
  *
  * should-test  Kotlin testing functions
  * Copyright (c) 2024 Peter Wall
@@ -31,18 +31,6 @@ import kotlin.internal.OnlyInputTypes
 import kotlin.reflect.KClass
 import kotlin.test.assertFailsWith
 import kotlin.test.asserter
-
-/**
- * Test that [String] is equal to expected.
- */
-infix fun String?.shouldBe(expected: String?) {
-    if (this != expected) {
-        if (isComplex() || expected.isComplex())
-            asserter.assertEquals(null, expected, this) // this function causes IDE to suggest comparison window
-        else
-            asserter.fail("Value should be ${out(expected)}, was ${out(this)}")
-    }
-}
 
 /**
  * Test that value is equal to expected.
@@ -77,99 +65,19 @@ infix fun <@OnlyInputTypes T> T.shouldNotBe(test: T.() -> Boolean) {
 }
 
 /**
- * Test that an [Iterable] (_e.g._ [List], [Set]) contains the given element.
+ * Test that value is one of a collection.
  */
-infix fun <@OnlyInputTypes T> Iterable<T>.shouldContain(element: T) {
-    if (element !in this)
-        asserter.fail("Collection should contain ${out(element)}")
+infix fun <@OnlyInputTypes T> T.shouldBeOneOf(collection: Collection<T>) {
+    if (this !in collection)
+        asserter.fail("Value should be one of collection, was ${out(this)}")
 }
 
 /**
- * Test that an [Iterable] (_e.g._ [List], [Set]) does not contain the given element.
+ * Test that value is not one of a collection.
  */
-infix fun <@OnlyInputTypes T> Iterable<T>.shouldNotContain(element: T) {
-    if (element in this)
-        asserter.fail("Collection should not contain ${out(element)}")
-}
-
-/**
- * Test that a [Map] contains the given key.
- */
-infix fun <@OnlyInputTypes K, V> Map<K, V>.shouldContainKey(key: K) {
-    if (!containsKey(key))
-        asserter.fail("Map should contain key ${out(key)}")
-}
-
-/**
- * Test that a [Map] does not contain the given key.
- */
-infix fun <@OnlyInputTypes K, V> Map<K, V>.shouldNotContainKey(key: K) {
-    if (containsKey(key))
-        asserter.fail("Map should not contain key ${out(key)}")
-}
-
-/**
- * Test that a [String] contains a given substring.
- */
-infix fun String.shouldContain(subString: String) {
-    if (!contains(subString))
-        asserter.fail("String should contain ${str(subString)}, was ${str(this)}")
-}
-
-/**
- * Test that a [String] does not contain a given substring.
- */
-infix fun String.shouldNotContain(subString: String) {
-    if (contains(subString))
-        asserter.fail("String should not contain ${str(subString)}, was ${str(this)}")
-}
-
-/**
- * Test that a [String] starts with a given prefix.
- */
-infix fun String.shouldStartWith(prefix: String) {
-    if (!startsWith(prefix))
-        asserter.fail("String should start with ${str(prefix)}, was ${str(this)}")
-}
-
-/**
- * Test that a [String] does not start with a given prefix.
- */
-infix fun String.shouldNotStartWith(prefix: String) {
-    if (startsWith(prefix))
-        asserter.fail("String should not start with ${str(prefix)}, was ${str(this)}")
-}
-
-/**
- * Test that a [String] ends with a given suffix.
- */
-infix fun String.shouldEndWith(suffix: String) {
-    if (!endsWith(suffix))
-        asserter.fail("String should end with ${str(suffix)}, was ${str(this)}")
-}
-
-/**
- * Test that a [String] does not end with a given suffix.
- */
-infix fun String.shouldNotEndWith(suffix: String) {
-    if (endsWith(suffix))
-        asserter.fail("String should not end with ${str(suffix)}, was ${str(this)}")
-}
-
-/**
- * Test that a [String] matches a given [Regex].
- */
-infix fun String.shouldMatch(regex: Regex) {
-    if (!regex.containsMatchIn(this))
-        asserter.fail("String should match regex $regex, was ${str(this)}")
-}
-
-/**
- * Test that a [String] does not match a given [Regex].
- */
-infix fun String.shouldNotMatch(regex: Regex) {
-    if (regex.containsMatchIn(this))
-        asserter.fail("String should not match regex $regex, was ${str(this)}")
+infix fun <@OnlyInputTypes T> T.shouldNotBeOneOf(collection: Collection<T>) {
+    if (this in collection)
+        asserter.fail("Value should not be one of collection, was ${out(this)}")
 }
 
 /**
@@ -194,6 +102,15 @@ infix fun <@OnlyInputTypes T> T.shouldNotBeSameInstance(expected: T) {
 inline fun <reified T : Throwable> shouldThrow(block: () -> Unit): T = assertFailsWith(T::class, null, block)
 
 /**
+ * Test that a [Throwable] of the specified type and message is thrown in a given block of code.
+ */
+inline fun <reified T : Throwable> shouldThrow(message: String, block: () -> Unit): T =
+        assertFailsWith(T::class, null, block).also {
+            if (it.message != message)
+                asserter.fail("Message incorrect, was ${out(it.message)}")
+        }
+
+/**
  * Test that a value is non-null, and return the value for further testing.
  */
 fun <T : Any> T?.shouldBeNonNull(): T = this ?: asserter.fail("Value should not be null")
@@ -205,21 +122,24 @@ inline fun <reified T> Any?.shouldBeType(): T = if (this is T) this else
     asserter.fail("Value should be ${T::class.simplifyName()}, was " +
             if (this == null) "null" else this::class.simplifyName())
 
+// shared functions
+
+@PublishedApi
 internal fun out(value: Any?): String = when (value) {
     null -> "null"
     is CharSequence -> str(value)
     else -> value.toString()
 }
 
+@PublishedApi
 internal fun str(value: CharSequence): String = buildString {
     append('"')
     append(value)
     append('"')
 }
 
-internal fun String?.isComplex(): Boolean = this != null && (length > 20  || any { it !in ' '..'~' })
-
-fun KClass<*>.simplifyName(): String {
+@PublishedApi
+internal fun KClass<*>.simplifyName(): String {
     val name = qualifiedName
     return when {
         name == null -> "<unknown type>"

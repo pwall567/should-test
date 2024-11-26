@@ -29,7 +29,7 @@ And as a bonus, the library is very simple and lightweight &ndash; the main sour
 
 ## Dependency Specification
 
-The latest version of the library is 2.0, and it may be obtained from the Maven Central repository.
+The latest version of the library is 2.1, and it may be obtained from the Maven Central repository.
 (The following dependency declarations assume that the library will be included for test purposes; this is
 expected to be its principal use.)
 
@@ -38,17 +38,17 @@ expected to be its principal use.)
     <dependency>
       <groupId>io.kstuff</groupId>
       <artifactId>should-test</artifactId>
-      <version>2.0</version>
+      <version>2.1</version>
       <scope>test</scope>
     </dependency>
 ```
 ### Gradle
 ```groovy
-    testImplementation 'io.kstuff:should-test:2.0'
+    testImplementation 'io.kstuff:should-test:2.1'
 ```
 ### Gradle (kts)
 ```kotlin
-    testImplementation("io.kstuff:should-test:2.0")
+    testImplementation("io.kstuff:should-test:2.1")
 ```
 
 Peter Wall

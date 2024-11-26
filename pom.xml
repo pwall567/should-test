@@ -5,7 +5,7 @@
 
   <groupId>io.kstuff</groupId>
   <artifactId>should-test</artifactId>
-  <version>2.0</version>
+  <version>2.1</version>
   <name>Kotlin testing functions</name>
   <description>Functions to simplify testing of Kotlin projects</description>
   <packaging>jar</packaging>
