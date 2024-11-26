@@ -2,6 +2,13 @@
 
 The format is based on [Keep a Changelog](http://keepachangelog.com/).
 
+## [2.2] - 2024-11-27
+### Added
+- `StateCheck`, `ComparableStateCheck`: expanded test mechanism
+### Changed
+- `GenericTests`: use `StateCheck`
+- `pom.xml`: tweak deployment configuration
+
 ## [2.1] - 2024-11-26
 ### Added
 - `CollectionTests`, `StringTests`: split out from `TestFunctions`

@@ -41,11 +41,19 @@ infix fun <@OnlyInputTypes T> T.shouldBe(expected: T) {
 }
 
 /**
- * Test that lambda applied to the value returns `true`.]
+ * Test that lambda applied to the value returns `true`.
  */
 infix fun <@OnlyInputTypes T> T.shouldBe(test: T.() -> Boolean) {
     if (!test())
         asserter.fail("Value should be valid for test, was ${out(this)}")
+}
+
+/**
+ * Test that value is in the state described by a [StateCheck].
+ */
+infix fun <@OnlyInputTypes T> T.shouldBe(stateCheck: StateCheck<T>) {
+    if (!stateCheck.inState(this))
+        asserter.fail("Value should be ${stateCheck.name}, was ${out(this)}")
 }
 
 /**
@@ -57,11 +65,19 @@ infix fun <@OnlyInputTypes T> T.shouldNotBe(expected: T) {
 }
 
 /**
- * Test that lambda applied to the value returns `false`.]
+ * Test that lambda applied to the value returns `false`.
  */
 infix fun <@OnlyInputTypes T> T.shouldNotBe(test: T.() -> Boolean) {
     if (test())
         asserter.fail("Value should not be valid for test, was ${out(this)}")
+}
+
+/**
+ * Test that value is not in the state described by a [StateCheck].
+ */
+infix fun <@OnlyInputTypes T> T.shouldNotBe(stateCheck: StateCheck<T>) {
+    if (stateCheck.inState(this))
+        asserter.fail("Value should not be ${stateCheck.name}, was ${out(this)}")
 }
 
 /**
@@ -134,7 +150,7 @@ internal fun out(value: Any?): String = when (value) {
 @PublishedApi
 internal fun str(value: CharSequence): String = buildString {
     append('"')
-    append(value)
+    append(value) // TODO remove non-printable characters and elide long strings
     append('"')
 }
 
