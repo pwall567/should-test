@@ -127,6 +127,23 @@ class StringTestsTest {
         }
     }
 
+    @Test fun `should elide long string in error message`() {
+        assertFailsWith<AssertionError> {
+            "The quick brown fox jumps over the lazy dog." shouldStartWith "A"
+        }.let {
+            assertEquals("String should start with \"A\", was \"The quick brown f ... ver the lazy dog.\"", it.message)
+        }
+    }
+
+    @Test fun `should sanitize non-ASCII in error message`() {
+        assertFailsWith<AssertionError> {
+            "Special \u2014 \u00a3 \u00a5 \u20AC\n" shouldStartWith "A"
+        }.let {
+            assertEquals("String should start with \"A\", was \"Special \\u2014 \\u00a3 \\u00a5 \\u20ac\\n\"",
+                    it.message)
+        }
+    }
+
     @Suppress("ConstPropertyName")
     companion object {
 

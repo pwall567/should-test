@@ -27,13 +27,14 @@
 
 package io.kstuff.test
 
+import kotlin.internal.InlineOnly
 import kotlin.internal.OnlyInputTypes
 import kotlin.test.asserter
 
 /**
  * Test that an [Iterable] (_e.g._ [List], [Set]) contains the given element.
  */
-infix fun <@OnlyInputTypes T> Iterable<T>.shouldContain(element: T) {
+@InlineOnly infix fun <@OnlyInputTypes T> Iterable<T>.shouldContain(element: T) {
     if (element !in this)
         asserter.fail("Collection should contain ${out(element)}")
 }
@@ -41,7 +42,7 @@ infix fun <@OnlyInputTypes T> Iterable<T>.shouldContain(element: T) {
 /**
  * Test that an [Iterable] (_e.g._ [List], [Set]) does not contain the given element.
  */
-infix fun <@OnlyInputTypes T> Iterable<T>.shouldNotContain(element: T) {
+@InlineOnly infix fun <@OnlyInputTypes T> Iterable<T>.shouldNotContain(element: T) {
     if (element in this)
         asserter.fail("Collection should not contain ${out(element)}")
 }
@@ -49,7 +50,7 @@ infix fun <@OnlyInputTypes T> Iterable<T>.shouldNotContain(element: T) {
 /**
  * Test that a [Map] contains the given key.
  */
-infix fun <@OnlyInputTypes K, V> Map<K, V>.shouldContainKey(key: K) {
+@InlineOnly infix fun <@OnlyInputTypes K, V> Map<K, V>.shouldContainKey(key: K) {
     if (!containsKey(key))
         asserter.fail("Map should contain key ${out(key)}")
 }
@@ -57,7 +58,7 @@ infix fun <@OnlyInputTypes K, V> Map<K, V>.shouldContainKey(key: K) {
 /**
  * Test that a [Map] does not contain the given key.
  */
-infix fun <@OnlyInputTypes K, V> Map<K, V>.shouldNotContainKey(key: K) {
+@InlineOnly infix fun <@OnlyInputTypes K, V> Map<K, V>.shouldNotContainKey(key: K) {
     if (containsKey(key))
         asserter.fail("Map should not contain key ${out(key)}")
 }

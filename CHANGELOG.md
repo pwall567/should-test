@@ -2,6 +2,11 @@
 
 The format is based on [Keep a Changelog](http://keepachangelog.com/).
 
+## [3.0] - 2024-11-28
+### Changed
+- `GenericTests`, `CollectionTests`: use `@InlineOnly` and contracts
+- `GenericTests`: sanitize string output
+
 ## [2.2] - 2024-11-27
 ### Added
 - `StateCheck`, `ComparableStateCheck`: expanded test mechanism

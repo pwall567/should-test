@@ -153,8 +153,18 @@ class GenericTestsTest {
         shouldThrow<NumberFormatException> { "bad".toInt() }
     }
 
+    @Suppress("ComplexRedundantLet")
     @Test fun `should throw AssertionError when shouldThrow fails`() {
-        assertFailsWith<AssertionError> { shouldThrow<NumberFormatException> { "123".toInt() } }
+        assertFailsWith<AssertionError> { shouldThrow<NumberFormatException> { "123".toInt() } }.let {
+            assertEquals("Should throw NumberFormatException but completed without exception", it.message)
+        }
+    }
+
+    @Suppress("ComplexRedundantLet")
+    @Test fun `should throw AssertionError when shouldThrow finds wrong exception type`() {
+        assertFailsWith<AssertionError> { shouldThrow<NumberFormatException> { throw RuntimeException("XXX") } }.let {
+            assertEquals("Should throw NumberFormatException but threw RuntimeException", it.message)
+        }
     }
 
     @Test fun `should perform shouldThrow with message`() {
@@ -165,12 +175,17 @@ class GenericTestsTest {
         assertFailsWith<AssertionError> {
             shouldThrow<RuntimeException>("Something went wrong") { throw RuntimeException("Bad message") }
         }.let {
-            assertEquals("Message incorrect, was \"Bad message\"", it.message)
+            assertEquals("Should throw with message \"Something went wrong\", was \"Bad message\"", it.message)
         }
     }
 
     @Test fun `should perform shouldBeNonNull`() {
         value6.shouldBeNonNull() shouldBe 12345
+    }
+
+    @Test fun `should smart cast after shouldBeNonNull`() {
+        value6.shouldBeNonNull()
+        value6 shouldBe 12345
     }
 
     @Suppress("ComplexRedundantLet")
@@ -183,6 +198,12 @@ class GenericTestsTest {
     @Test fun `should perform shouldBeType`() {
         val temp: Number = value1
         temp.shouldBeType<Int>() shouldBe 12345
+    }
+
+    @Test fun `should smart cast after shouldBeType`() {
+        val temp: Any = value2
+        temp.shouldBeType<String>()
+        temp shouldBe "Test string"
     }
 
     @Suppress("ComplexRedundantLet")
