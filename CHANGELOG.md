@@ -2,6 +2,17 @@
 
 The format is based on [Keep a Changelog](http://keepachangelog.com/).
 
+## [4.0] - 2024-12-10
+### Added
+- `ErrorMessages`: split messages out into separate object (so they can be shared)
+- `NamedPredicate`: replaces `StateCheck` _etc._
+- `ComparablePredicate`: tests on `Comparable` values
+- `CombinedTests`, `CombinedAssertionError`: combined tests
+### Changed
+- `GenericTests`, `StringTests`, `CollectionTests`: moved message formatting to `ErrorMessages`
+### Removed
+- `StateCheck`, `ComparableStateCheck`: replaced by `NamedPredicate`
+
 ## [3.0] - 2024-11-28
 ### Changed
 - `GenericTests`, `CollectionTests`: use `@InlineOnly` and contracts

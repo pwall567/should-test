@@ -59,13 +59,13 @@ class GenericTestsTest {
     }
 
     @Test fun `should perform shouldBe with lambda`() {
-        value2 shouldBe { isNotEmpty() }
+        value2 shouldBe { it.isNotEmpty() }
     }
 
     @Suppress("ComplexRedundantLet")
     @Test fun `should throw AssertionError when shouldBe with lambda fails`() {
-        assertFailsWith<AssertionError> { value2 shouldBe { isEmpty() } }.let {
-            assertEquals("Value should be valid for test, was \"Test string\"", it.message)
+        assertFailsWith<AssertionError> { value2 shouldBe { it.isEmpty() } }.let {
+            assertEquals("Value should match predicate, was \"Test string\"", it.message)
         }
     }
 
@@ -89,13 +89,13 @@ class GenericTestsTest {
     }
 
     @Test fun `should perform shouldNotBe with lambda`() {
-        value2 shouldNotBe { isEmpty() }
+        value2 shouldNotBe { it.isEmpty() }
     }
 
     @Suppress("ComplexRedundantLet")
     @Test fun `should throw AssertionError when shouldNotBe with lambda fails`() {
-        assertFailsWith<AssertionError> { value2 shouldNotBe { isNotEmpty() } }.let {
-            assertEquals("Value should not be valid for test, was \"Test string\"", it.message)
+        assertFailsWith<AssertionError> { value2 shouldNotBe { it.isNotEmpty() } }.let {
+            assertEquals("Value should not match predicate, was \"Test string\"", it.message)
         }
     }
 
@@ -107,7 +107,7 @@ class GenericTestsTest {
     @Suppress("ComplexRedundantLet")
     @Test fun `should throw AssertionError when shouldBeOneOf fails`() {
         assertFailsWith<AssertionError> { value1 shouldBeOneOf listOf(1, 2, 3) }.let {
-            assertEquals("Value should be one of collection, was 12345", it.message)
+            assertEquals("Value should be one of [ 1, 2, 3 ], was 12345", it.message)
         }
     }
 
@@ -119,7 +119,7 @@ class GenericTestsTest {
     @Suppress("ComplexRedundantLet")
     @Test fun `should throw AssertionError when shouldNotBeOneOf fails`() {
         assertFailsWith<AssertionError> { value1 shouldNotBeOneOf listOf(12345, 12346) }.let {
-            assertEquals("Value should not be one of collection, was 12345", it.message)
+            assertEquals("Value should not be one of [ 12345, 12346 ], was 12345", it.message)
         }
     }
 

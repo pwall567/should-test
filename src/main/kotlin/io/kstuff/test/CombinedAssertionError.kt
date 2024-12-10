@@ -1,5 +1,5 @@
 /*
- * @(#) StateCheck.kt
+ * @(#) CombinedAssertionError.kt
  *
  * should-test  Kotlin testing functions
  * Copyright (c) 2024 Peter Wall
@@ -25,17 +25,19 @@
 
 package io.kstuff.test
 
-/**
- * An interface to represent a state check to be tested in a `shouldBe`.
- */
-interface StateCheck<T> {
-
-    /** The name to appear in the error message (Preceded by "Value should be " or "Value should not be ". */
-    val name: String
-
-    /**
-     * Test whether the value is in the state described by this `StateCheck`.
-     */
-    fun inState(value: T): Boolean
-
-}
+class CombinedAssertionError(val errors: List<Pair<String, StackTraceElement>>) :
+    AssertionError(
+        buildString {
+            append("shouldCombineTests found ")
+            append(errors.size)
+            append(" error")
+            if (errors.size != 1)
+                append('s')
+            for (error in errors) {
+                append("\n  ")
+                append(error.first)
+                append("\n    at ")
+                append(error.second.toString())
+            }
+        }
+    )

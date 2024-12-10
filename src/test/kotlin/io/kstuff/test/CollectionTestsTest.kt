@@ -29,6 +29,8 @@ import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertFailsWith
 
+import io.kstuff.test.ErrorMessages.appendValue
+
 class CollectionTestsTest {
 
     @Test fun `should perform shouldContain`() {
@@ -39,7 +41,7 @@ class CollectionTestsTest {
     @Suppress("ComplexRedundantLet")
     @Test fun `should throw AssertionError when shouldContain fails`() {
         assertFailsWith<AssertionError> { list1 shouldContain "delta" }.let {
-            assertEquals("Collection should contain \"delta\"", it.message)
+            assertEquals("""Collection [ "alpha", "beta", "gamma" ] should contain "delta"""", it.message)
         }
     }
 
@@ -50,7 +52,7 @@ class CollectionTestsTest {
     @Suppress("ComplexRedundantLet")
     @Test fun `should throw AssertionError when shouldNotContain fails`() {
         assertFailsWith<AssertionError> { list1 shouldNotContain "alpha" }.let {
-            assertEquals("Collection should not contain \"alpha\"", it.message)
+            assertEquals("""Collection [ "alpha", "beta", "gamma" ] should not contain "alpha"""", it.message)
         }
     }
 
@@ -62,7 +64,7 @@ class CollectionTestsTest {
     @Suppress("ComplexRedundantLet")
     @Test fun `should throw AssertionError when shouldContainKey fails`() {
         assertFailsWith<AssertionError> { map1 shouldContainKey "alpha" }.let {
-            assertEquals("Map should contain key \"alpha\"", it.message)
+            assertEquals("Map ${buildString { appendValue(map1) }} should contain key \"alpha\"", it.message)
         }
     }
 
@@ -73,7 +75,7 @@ class CollectionTestsTest {
     @Suppress("ComplexRedundantLet")
     @Test fun `should throw AssertionError when shouldNotContainKey fails`() {
         assertFailsWith<AssertionError> { map1 shouldNotContainKey "first" }.let {
-            assertEquals("Map should not contain key \"first\"", it.message)
+            assertEquals("Map ${buildString { appendValue(map1) }} should not contain key \"first\"", it.message)
         }
     }
 

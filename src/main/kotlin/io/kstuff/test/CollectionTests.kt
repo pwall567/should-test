@@ -31,12 +31,14 @@ import kotlin.internal.InlineOnly
 import kotlin.internal.OnlyInputTypes
 import kotlin.test.asserter
 
+import io.kstuff.test.ErrorMessages.appendValue
+
 /**
  * Test that an [Iterable] (_e.g._ [List], [Set]) contains the given element.
  */
 @InlineOnly infix fun <@OnlyInputTypes T> Iterable<T>.shouldContain(element: T) {
     if (element !in this)
-        asserter.fail("Collection should contain ${out(element)}")
+        asserter.fail(errorCollectionShouldContain(this, element))
 }
 
 /**
@@ -44,7 +46,7 @@ import kotlin.test.asserter
  */
 @InlineOnly infix fun <@OnlyInputTypes T> Iterable<T>.shouldNotContain(element: T) {
     if (element in this)
-        asserter.fail("Collection should not contain ${out(element)}")
+        asserter.fail(errorCollectionShouldNotContain(this, element))
 }
 
 /**
@@ -52,7 +54,7 @@ import kotlin.test.asserter
  */
 @InlineOnly infix fun <@OnlyInputTypes K, V> Map<K, V>.shouldContainKey(key: K) {
     if (!containsKey(key))
-        asserter.fail("Map should contain key ${out(key)}")
+        asserter.fail(errorMapShouldContainKey(this, key))
 }
 
 /**
@@ -60,5 +62,33 @@ import kotlin.test.asserter
  */
 @InlineOnly infix fun <@OnlyInputTypes K, V> Map<K, V>.shouldNotContainKey(key: K) {
     if (containsKey(key))
-        asserter.fail("Map should not contain key ${out(key)}")
+        asserter.fail(errorMapShouldNotContainKey(this, key))
+}
+
+internal fun <T> errorCollectionShouldContain(iterable: Iterable<T>, element: T) = buildString {
+    append("Collection ")
+    appendValue(iterable)
+    append(" should contain ")
+    appendValue(element)
+}
+
+internal fun <T> errorCollectionShouldNotContain(iterable: Iterable<T>, element: T) = buildString {
+    append("Collection ")
+    appendValue(iterable)
+    append(" should not contain ")
+    appendValue(element)
+}
+
+internal fun <K, V> errorMapShouldContainKey(map: Map<K, V>, key: K) = buildString {
+    append("Map ")
+    appendValue(map)
+    append(" should contain key ")
+    appendValue(key)
+}
+
+internal fun <K, V> errorMapShouldNotContainKey(map: Map<K, V>, key: K) = buildString {
+    append("Map ")
+    appendValue(map)
+    append(" should not contain key ")
+    appendValue(key)
 }

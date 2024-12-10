@@ -78,18 +78,18 @@ The complement to `shouldBe` performs a simple inequality test:
 Like `shouldBe`, it expects both sides of the comparison to be the same type, and it may be applied to boolean and
 nullable values.
 
-### `shouldBe` with `Boolean` lambda
+### `shouldBe` with Predicate
 
-A variation on `shouldBe` takes a lambda returning a `Boolean`:
+A variation on `shouldBe` takes a predicate returning a `Boolean` (see [Named Predicates](#named-predicates) below):
 ```kotlin
-    stringValue shouldBe { isNotEmpty() }
+    stringValue shouldBe { it.isNotEmpty() }
 ```
 
-### `shouldNotBe` with `Boolean` lambda
+### `shouldNotBe` with Predicate
 
-The complement of `shouldBe` with a lambda:
+The complement of `shouldBe` with a predicate:
 ```kotlin
-    stringValue shouldNotBe { isEmpty() }
+    stringValue shouldNotBe { it.isEmpty() }
 ```
 
 ### `shouldBeOneOf`
@@ -215,9 +215,80 @@ Both forms of `shouldThrow` return the exception (`Throwable`) instance, which m
     }
 ```
 
+## Named Predicates
+
+The generic `shouldBe` and `shouldNotBe` functions have forms that take a predicate &ndash; a function that, when
+applied to the value, returns a `Boolean`.
+The example given above tests whether a string value is empty:
+```kotlin
+    stringValue shouldBe { it.isNotEmpty() }
+```
+but the problem with using predicates in this way is that the library does not have sufficient information to form a
+useful error message if the predicate returns `false`.
+
+The library includes a `NamedPredicate` interface, which allows a name to be given to the condition being tested; the
+`shouldBe` (and `shouldNotBe`) function will use that name when reporting an error.
+
+Implementations of the `NamedPredicate` interface must implement the `name` value, along with the usual `invoke()`
+function, as in this example:
+```kotlin
+    val even = object : NamedPredicate<Int> {
+        override val name: String = "even"
+        override fun invoke(value: Int): Boolean = (value and 1) == 0
+    }
+```
+Then, a test may be written:
+```kotlin
+    value1 shouldBe even
+```
+And an error will be reported as &ldquo;`Value should be even, was 123`&rdquo;.
+
+## Comparable Predicates
+
+There is a set of functions that will create a `NamedPredicate` to perform comparisons on `Comparable` values
+automatically.
+
+- `lt(value)`: check that the original value (the value to the left of the `shouldBe`) is less than the value given here
+- `le(value)`: check that the original value is less than or equal to the value given here
+- `ge(value)`: check that the original value is greater than or equal to the value given here
+- `gt(value)`: check that the original value is greater than the value given here
+
+This allows tests such as the following:
+```kotlin
+    value1 shouldBe gt(100)
+```
+And these tests will give helpful error messages like &ldquo;`Value should be > 100, was 99`&rdquo;.
+
+These tests are available only on values of classes that implement the `Comparable` interface, _e.g._ `Int`, `Long`.
+
+## Combined Tests
+
+Some developers prefer to see the results of an entire set of tests, rather than having the test framework stop on the
+first failing test.
+This technique, sometimes referred to as &ldquo;soft assertions&rdquo;, is available using the `shouldCombineTests`
+function:
+```kotlin
+    shouldCombineTests {
+        value1 shouldBe 123
+        value2 shouldNotBe "whatever"
+    }
+```
+Any tests within the lambda following `shouldCombineTests` will use modified versions of the test functions.
+If any of these modified test functions fail, then instead of throwing an `AssertionError`, they will simply add the
+error details to an internal list and allow the function to continue.
+Then, at the end of the whole block of tests, if there are any errors in the list, a `CombinedAssertionError` will be
+thrown &ndash; this includes a formatted message detailing all of the failing tests, along with a list of error results
+(named `errors`) that may be checked programmatically.
+
+Not all of the test functions may be nested within `shouldCombineTests`.
+The `shouldThrow`, `shouldBeNonNull` and `shouldBeType` functions all return a value, and it is not possible to create a
+version that returns a value of the required type following an error.
+If these test functions are used with `shouldCombineTests` they will throw an individual `AssertionError` on failure as
+usual.
+
 ## Dependency Specification
 
-The latest version of the library is 3.0, and it may be obtained from the Maven Central repository.
+The latest version of the library is 4.0, and it may be obtained from the Maven Central repository.
 (The following dependency declarations assume that the library will be included for test purposes; this is
 expected to be its principal use.)
 
@@ -226,19 +297,19 @@ expected to be its principal use.)
     <dependency>
       <groupId>io.kstuff</groupId>
       <artifactId>should-test</artifactId>
-      <version>3.0</version>
+      <version>4.0</version>
       <scope>test</scope>
     </dependency>
 ```
 ### Gradle
 ```groovy
-    testImplementation 'io.kstuff:should-test:3.0'
+    testImplementation 'io.kstuff:should-test:4.0'
 ```
 ### Gradle (kts)
 ```kotlin
-    testImplementation("io.kstuff:should-test:3.0")
+    testImplementation("io.kstuff:should-test:4.0")
 ```
 
 Peter Wall
 
-2024-11-28
+2024-12-10

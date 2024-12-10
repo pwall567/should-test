@@ -32,33 +32,37 @@ import kotlin.contracts.InvocationKind
 import kotlin.contracts.contract
 import kotlin.internal.InlineOnly
 import kotlin.internal.OnlyInputTypes
-import kotlin.reflect.KClass
 import kotlin.test.asserter
+
+import io.kstuff.test.ErrorMessages.errorShouldBe
+import io.kstuff.test.ErrorMessages.errorShouldBeOneOf
+import io.kstuff.test.ErrorMessages.errorShouldBePredicate
+import io.kstuff.test.ErrorMessages.errorShouldBeSameInstance
+import io.kstuff.test.ErrorMessages.errorShouldBeType
+import io.kstuff.test.ErrorMessages.errorShouldNotBe
+import io.kstuff.test.ErrorMessages.errorShouldNotBeOneOf
+import io.kstuff.test.ErrorMessages.errorShouldNotBePredicate
+import io.kstuff.test.ErrorMessages.errorShouldNotBeSameInstance
+import io.kstuff.test.ErrorMessages.errorShouldThrowButCompleted
+import io.kstuff.test.ErrorMessages.errorShouldThrowButThrew
+import io.kstuff.test.ErrorMessages.errorShouldThrowWithMessage
 
 /**
  * Test that value is equal to expected.
  */
 @InlineOnly infix fun <@OnlyInputTypes T> T.shouldBe(expected: T) {
     if (this != expected)
-        asserter.fail("Value should be ${out(expected)}, was ${out(this)}")
+        asserter.fail(errorShouldBe(expected, this))
 }
 
 /**
- * Test that lambda applied to the value returns `true`.
+ * Test that predicate applied to the value returns `true`.
  */
 @OptIn(ExperimentalContracts::class)
-@InlineOnly infix fun <@OnlyInputTypes T> T.shouldBe(test: T.() -> Boolean) {
-    contract { callsInPlace(test, InvocationKind.EXACTLY_ONCE) }
-    if (!test())
-        asserter.fail("Value should be valid for test, was ${out(this)}")
-}
-
-/**
- * Test that value is in the state described by a [StateCheck].
- */
-@InlineOnly infix fun <@OnlyInputTypes T> T.shouldBe(stateCheck: StateCheck<T>) {
-    if (!stateCheck.inState(this))
-        asserter.fail("Value should be ${stateCheck.name}, was ${out(this)}")
+@InlineOnly infix fun <@OnlyInputTypes T> T.shouldBe(predicate: (T) -> Boolean) {
+    contract { callsInPlace(predicate, InvocationKind.EXACTLY_ONCE) }
+    if (!predicate(this))
+        asserter.fail(errorShouldBePredicate(this, predicate))
 }
 
 /**
@@ -66,25 +70,17 @@ import kotlin.test.asserter
  */
 @InlineOnly infix fun <@OnlyInputTypes T> T.shouldNotBe(expected: T) {
     if (this == expected)
-        asserter.fail("Value should not be ${out(expected)}")
+        asserter.fail(errorShouldNotBe(this))
 }
 
 /**
- * Test that lambda applied to the value returns `false`.
+ * Test that predicate applied to the value returns `false`.
  */
 @OptIn(ExperimentalContracts::class)
-@InlineOnly infix fun <@OnlyInputTypes T> T.shouldNotBe(test: T.() -> Boolean) {
-    contract { callsInPlace(test, InvocationKind.EXACTLY_ONCE) }
-    if (test())
-        asserter.fail("Value should not be valid for test, was ${out(this)}")
-}
-
-/**
- * Test that value is not in the state described by a [StateCheck].
- */
-@InlineOnly infix fun <@OnlyInputTypes T> T.shouldNotBe(stateCheck: StateCheck<T>) {
-    if (stateCheck.inState(this))
-        asserter.fail("Value should not be ${stateCheck.name}, was ${out(this)}")
+@InlineOnly infix fun <@OnlyInputTypes T> T.shouldNotBe(predicate: (T) -> Boolean) {
+    contract { callsInPlace(predicate, InvocationKind.EXACTLY_ONCE) }
+    if (predicate(this))
+        asserter.fail(errorShouldNotBePredicate(this, predicate))
 }
 
 /**
@@ -92,7 +88,7 @@ import kotlin.test.asserter
  */
 @InlineOnly infix fun <@OnlyInputTypes T> T.shouldBeOneOf(collection: Collection<T>) {
     if (this !in collection)
-        asserter.fail("Value should be one of collection, was ${out(this)}")
+        asserter.fail(errorShouldBeOneOf(collection, this))
 }
 
 /**
@@ -100,7 +96,7 @@ import kotlin.test.asserter
  */
 @InlineOnly infix fun <@OnlyInputTypes T> T.shouldNotBeOneOf(collection: Collection<T>) {
     if (this in collection)
-        asserter.fail("Value should not be one of collection, was ${out(this)}")
+        asserter.fail(errorShouldNotBeOneOf(collection, this))
 }
 
 /**
@@ -108,7 +104,7 @@ import kotlin.test.asserter
  */
 @InlineOnly infix fun <@OnlyInputTypes T> T.shouldBeSameInstance(expected: T) {
     if (this !== expected)
-        asserter.fail("Value should be same instance as ${out(expected)}, was ${out(this)}")
+        asserter.fail(errorShouldBeSameInstance(expected, this))
 }
 
 /**
@@ -116,7 +112,7 @@ import kotlin.test.asserter
  */
 @InlineOnly infix fun <@OnlyInputTypes T> T.shouldNotBeSameInstance(expected: T) {
     if (this === expected)
-        asserter.fail("Value should not be same instance as ${out(expected)}")
+        asserter.fail(errorShouldNotBeSameInstance(expected))
 }
 
 /**
@@ -131,13 +127,13 @@ import kotlin.test.asserter
     catch (t: Throwable) {
         if (t is T)
             return t
-        asserter.fail("Should throw ${T::class.simplifyName()} but threw ${t::class.simplifyName()}")
+        asserter.fail(errorShouldThrowButThrew(T::class, t::class))
     }
-    asserter.fail("Should throw ${T::class.simplifyName()} but completed without exception")
+    asserter.fail(errorShouldThrowButCompleted(T::class))
 }
 
 /**
- * Test that a [Throwable] of the specified type and message is thrown in a given block of code.
+ * Test that a [Throwable] of the specified type and with the specified message is thrown in a given block of code.
  */
 @OptIn(ExperimentalContracts::class)
 @InlineOnly inline fun <reified T : Throwable> shouldThrow(message: String, block: () -> Unit): T {
@@ -148,12 +144,12 @@ import kotlin.test.asserter
     catch (t: Throwable) {
         if (t is T) {
             if (t.message != message)
-                asserter.fail("Should throw with message ${str(message)}, was ${out(t.message)}")
+                asserter.fail(errorShouldThrowWithMessage(message, t.message))
             return t
         }
-        asserter.fail("Should throw ${T::class.simplifyName()} but threw ${t::class.simplifyName()}")
+        asserter.fail(errorShouldThrowButThrew(T::class, t::class))
     }
-    asserter.fail("Should throw ${T::class.simplifyName()} but completed without exception")
+    asserter.fail(errorShouldThrowButCompleted(T::class))
 }
 
 /**
@@ -171,68 +167,5 @@ import kotlin.test.asserter
 @OptIn(ExperimentalContracts::class)
 @InlineOnly inline fun <reified T> Any?.shouldBeType(): T {
     contract { returns() implies (this@shouldBeType is T) }
-    return if (this is T) this else
-        asserter.fail(
-            "Value should be ${T::class.simplifyName()}, was " +
-                    if (this == null) "null" else this::class.simplifyName()
-        )
-}
-
-// shared functions
-
-@PublishedApi internal fun out(value: Any?): String = when (value) {
-    null -> "null"
-    is CharSequence -> str(value)
-    else -> value.toString()
-}
-
-@PublishedApi internal fun str(value: CharSequence, maxLength: Int = 39): String = buildString {
-    append('"')
-    if (value.length <= maxLength)
-        appendSanitized(value, 0, value.length)
-    else {
-        val elisionString = " ... " // this could be parameterized (alongside maxLength) if that would be useful
-        val left = (maxLength - elisionString.length) / 2
-        val right = maxLength - elisionString.length - left
-        appendSanitized(value, 0, left)
-        append(elisionString)
-        appendSanitized(value, value.length - right, value.length)
-    }
-    append('"')
-}
-
-internal fun Appendable.appendSanitized(chars: CharSequence, start: Int, end: Int) {
-    for (i in start until end) {
-        when (val ch = chars[i]) {
-            // there are library functions for this, but those functions may need to use this test library
-            // repeating the functionality here avoids a circular dependency
-            in ' '..'~' -> append(ch)
-            '"' -> append("\\\"")
-            '\\' -> append("\\\\")
-            '\n' -> append("\\n")
-            '\r' -> append("\\r")
-            '\t' -> append("\\t")
-            '\b' -> append("\\b")
-            else -> {
-                append('\\')
-                append('u')
-                val code = ch.code
-                val hexChars = "0123456789abcdef"
-                append(hexChars[code ushr 12])
-                append(hexChars[(code shr 8) and 15])
-                append(hexChars[(code shr 4) and 15])
-                append(hexChars[code and 15])
-            }
-        }
-    }
-}
-
-@PublishedApi internal fun KClass<*>.simplifyName(): String {
-    val name = qualifiedName
-    return when {
-        name == null -> "<unknown type>"
-        name.startsWith("kotlin.") && name.indexOf('.', 7) < 0 -> name.substring(7)
-        name.startsWith("java.lang.") && name.indexOf('.', 10) < 0 -> name.substring(10)
-        else -> name
-    }
+    return if (this is T) this else asserter.fail(errorShouldBeType(T::class, this))
 }

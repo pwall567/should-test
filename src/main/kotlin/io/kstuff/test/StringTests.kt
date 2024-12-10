@@ -27,6 +27,10 @@ package io.kstuff.test
 
 import kotlin.test.asserter
 
+import io.kstuff.test.ErrorMessages.appendValue
+import io.kstuff.test.ErrorMessages.appendWas
+import io.kstuff.test.ErrorMessages.errorShouldBe
+
 /**
  * Test that [String] is equal to expected.
  */
@@ -35,7 +39,7 @@ infix fun String?.shouldBe(expected: String?) {
         if (isComplex() || expected.isComplex())
             asserter.assertEquals(null, expected, this) // this function causes IDE to suggest comparison window
         else
-            asserter.fail("Value should be ${out(expected)}, was ${out(this)}")
+            asserter.fail(errorShouldBe(expected, this))
     }
 }
 
@@ -44,7 +48,7 @@ infix fun String?.shouldBe(expected: String?) {
  */
 infix fun String.shouldContain(subString: String) {
     if (!contains(subString))
-        asserter.fail("String should contain ${str(subString)}, was ${str(this)}")
+        asserter.fail(errorStringShouldContain(subString, this))
 }
 
 /**
@@ -52,7 +56,7 @@ infix fun String.shouldContain(subString: String) {
  */
 infix fun String.shouldNotContain(subString: String) {
     if (contains(subString))
-        asserter.fail("String should not contain ${str(subString)}, was ${str(this)}")
+        asserter.fail(errorStringShouldNotContain(subString, this))
 }
 
 /**
@@ -60,7 +64,7 @@ infix fun String.shouldNotContain(subString: String) {
  */
 infix fun String.shouldStartWith(prefix: String) {
     if (!startsWith(prefix))
-        asserter.fail("String should start with ${str(prefix)}, was ${str(this)}")
+        asserter.fail(errorStringShouldStartWith(prefix, this))
 }
 
 /**
@@ -68,7 +72,7 @@ infix fun String.shouldStartWith(prefix: String) {
  */
 infix fun String.shouldNotStartWith(prefix: String) {
     if (startsWith(prefix))
-        asserter.fail("String should not start with ${str(prefix)}, was ${str(this)}")
+        asserter.fail(errorStringShouldNotStartWith(prefix, this))
 }
 
 /**
@@ -76,7 +80,7 @@ infix fun String.shouldNotStartWith(prefix: String) {
  */
 infix fun String.shouldEndWith(suffix: String) {
     if (!endsWith(suffix))
-        asserter.fail("String should end with ${str(suffix)}, was ${str(this)}")
+        asserter.fail(errorStringShouldEndWith(suffix, this))
 }
 
 /**
@@ -84,7 +88,7 @@ infix fun String.shouldEndWith(suffix: String) {
  */
 infix fun String.shouldNotEndWith(suffix: String) {
     if (endsWith(suffix))
-        asserter.fail("String should not end with ${str(suffix)}, was ${str(this)}")
+        asserter.fail(errorStringShouldNotEndWith(suffix, this))
 }
 
 /**
@@ -92,7 +96,7 @@ infix fun String.shouldNotEndWith(suffix: String) {
  */
 infix fun String.shouldMatch(regex: Regex) {
     if (!regex.containsMatchIn(this))
-        asserter.fail("String should match regex $regex, was ${str(this)}")
+        asserter.fail(errorStringShouldMatchRegex(regex, this))
 }
 
 /**
@@ -100,7 +104,55 @@ infix fun String.shouldMatch(regex: Regex) {
  */
 infix fun String.shouldNotMatch(regex: Regex) {
     if (regex.containsMatchIn(this))
-        asserter.fail("String should not match regex $regex, was ${str(this)}")
+        asserter.fail(errorStringShouldNotMatchRegex(regex, this))
 }
 
 internal fun String?.isComplex(): Boolean = this != null && (length > 20  || any { it !in ' '..'~' })
+
+internal fun errorStringShouldContain(subString: String, actual: String?) = buildString {
+    append("String should contain ")
+    appendValue(subString)
+    appendWas(actual)
+}
+
+internal fun errorStringShouldNotContain(subString: String, actual: String?) = buildString {
+    append("String should not contain ")
+    appendValue(subString)
+    appendWas(actual)
+}
+
+internal fun errorStringShouldStartWith(prefix: String, actual: String?) = buildString {
+    append("String should start with ")
+    appendValue(prefix)
+    appendWas(actual)
+}
+
+internal fun errorStringShouldNotStartWith(prefix: String, actual: String?) = buildString {
+    append("String should not start with ")
+    appendValue(prefix)
+    appendWas(actual)
+}
+
+internal fun errorStringShouldEndWith(suffix: String, actual: String?) = buildString {
+    append("String should end with ")
+    appendValue(suffix)
+    appendWas(actual)
+}
+
+internal fun errorStringShouldNotEndWith(suffix: String, actual: String?) = buildString {
+    append("String should not end with ")
+    appendValue(suffix)
+    appendWas(actual)
+}
+
+internal fun errorStringShouldMatchRegex(regex: Regex, actual: String?) = buildString {
+    append("String should match regex ")
+    append(regex)
+    appendWas(actual)
+}
+
+internal fun errorStringShouldNotMatchRegex(regex: Regex, actual: String?) = buildString {
+    append("String should not match regex ")
+    append(regex)
+    appendWas(actual)
+}
