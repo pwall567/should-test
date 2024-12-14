@@ -92,6 +92,13 @@ class ErrorMessagesTest {
         assertEquals("false", buildString { appendValue(false) })
     }
 
+    @Test fun `should append value for Array`() {
+        assertEquals("[ ]", buildString { appendValue(emptyArray<Int>()) })
+        assertEquals("[ 1, 2, 3, 4 ]", buildString { appendValue(arrayOf(1, 2, 3, 4)) })
+        assertEquals("[ 1, 2, 3, 4 ]", buildString { appendValue(intArrayOf(1, 2, 3, 4)) })
+        assertEquals("[ 1, 2, 3, ... ]", buildString { appendValue(arrayOf(1, 2, 3, 4), maxItems = 3) })
+    }
+
     @Test fun `should append value for List`() {
         assertEquals("[ ]", buildString { appendValue(emptyList<Int>()) })
         assertEquals("[ 1, 2, 3, 4 ]", buildString { appendValue(listOf(1, 2, 3, 4)) })

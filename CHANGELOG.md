@@ -2,6 +2,12 @@
 
 The format is based on [Keep a Changelog](http://keepachangelog.com/).
 
+## [4.2] - 2024-12-14
+### Added
+- `ArrayTests`: comparisons on arrays
+### Changed
+- `ErrorMessages`: added formatted output of arrays
+
 ## [4.1] - 2024-12-14
 ### Changed
 - `GenericTests`: added `shouldBeEqual` and `shouldNotBeEqual`

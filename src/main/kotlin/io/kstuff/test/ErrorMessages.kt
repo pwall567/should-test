@@ -126,38 +126,29 @@ object ErrorMessages {
     }
 
     internal fun Appendable.appendValue(value: Any?, maxString: Int = 39, maxItems: Int = 8, maxEntries: Int = 5) {
-        when (value) {
-            null -> append("null")
-            is String -> appendStringValue(value, maxLength = maxString)
-            is Char -> {
+        when {
+            value == null -> append("null")
+            value is CharArray -> appendCharArray(value, maxLength = maxString)
+            value is IntArray -> appendItems(value.iterator(), maxItems = maxItems)
+            value is LongArray -> appendItems(value.iterator(), maxItems = maxItems)
+            value is ShortArray -> appendItems(value.iterator(), maxItems = maxItems)
+            value is ByteArray -> appendItems(value.iterator(), maxItems = maxItems)
+            value is BooleanArray -> appendItems(value.iterator(), maxItems = maxItems)
+            value is DoubleArray -> appendItems(value.iterator(), maxItems = maxItems)
+            value is FloatArray -> appendItems(value.iterator(), maxItems = maxItems)
+            value::class.java.isArray -> appendItems((value as Array<*>).iterator(), maxItems = maxItems)
+            value is String -> appendStringValue(value, maxLength = maxString)
+            value is Char -> {
                 append('\'')
                 appendSanitized(value, '\'')
                 append('\'')
             }
-            is Long -> {
+            value is Long -> {
                 append(value.toString())
                 append('L')
             }
-            is Collection<*> -> {
-                append('[')
-                if (value.isNotEmpty()) {
-                    var count = 0
-                    val iterator = value.iterator()
-                    while (true) {
-                        append(' ')
-                        if (++count > maxItems) {
-                            append("...")
-                            break
-                        }
-                        appendValue(iterator.next(), maxString = 19, maxItems = 5, maxEntries = 3)
-                        if (!iterator.hasNext())
-                            break
-                        append(',')
-                    }
-                }
-                append(" ]")
-            }
-            is Map<*, *> -> {
+            value is Collection<*> -> appendItems(value.iterator(), maxItems = maxItems)
+            value is Map<*, *> -> {
                 append('{')
                 if (value.isNotEmpty()) {
                     var count = 0
@@ -183,6 +174,25 @@ object ErrorMessages {
         }
     }
 
+    private fun Appendable.appendItems(iterator: Iterator<*>, maxItems: Int) {
+        append('[')
+        if (iterator.hasNext()) {
+            var count = 0
+            while (true) {
+                append(' ')
+                if (++count > maxItems) {
+                    append("...")
+                    break
+                }
+                appendValue(iterator.next(), maxString = 19, maxItems = 5, maxEntries = 3)
+                if (!iterator.hasNext())
+                    break
+                append(',')
+            }
+        }
+        append(" ]")
+    }
+
     private fun Appendable.appendStringValue(value: String, maxLength: Int = 39) {
         append('"')
         if (value.length <= maxLength)
@@ -199,6 +209,26 @@ object ErrorMessages {
     }
 
     private fun Appendable.appendSanitized(chars: CharSequence, start: Int, end: Int) {
+        for (i in start until end)
+            appendSanitized(chars[i], '"')
+    }
+
+    private fun Appendable.appendCharArray(value: CharArray, maxLength: Int = 39) {
+        append('"')
+        if (value.size <= maxLength)
+            appendSanitized(value, 0, value.size)
+        else {
+            val elisionString = " ... " // this could be parameterized (alongside maxLength) if that would be useful
+            val left = (maxLength - elisionString.length) / 2
+            val right = maxLength - elisionString.length - left
+            appendSanitized(value, 0, left)
+            append(elisionString)
+            appendSanitized(value, value.size - right, value.size)
+        }
+        append('"')
+    }
+
+    private fun Appendable.appendSanitized(chars: CharArray, start: Int, end: Int) {
         for (i in start until end)
             appendSanitized(chars[i], '"')
     }

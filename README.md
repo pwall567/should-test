@@ -61,12 +61,18 @@ As a generic function, it expects both sides of the comparison to be the same ty
 
 Boolean values may be tested:
 ```kotlin
-   booleanValue shouldBe true
+    booleanValue shouldBe true
+```
+
+Arrays may be tested, including `IntArray`, `BooleanArray` _etc._ (the `contentEquals` function will be used for the
+comparison):
+```kotlin
+    arrayValue shouldBe arrayOf(111, 222, 333)
 ```
 
 And nullable values may be tested for `null`:
 ```kotlin
-   nullableValue shouldBe null
+    nullableValue shouldBe null
 ```
 
 ### `shouldNotBe`
@@ -75,8 +81,8 @@ The complement to `shouldBe` performs a simple inequality test:
 ```kotlin
     testValue shouldNotBe wrongValue
 ```
-Like `shouldBe`, it expects both sides of the comparison to be the same type, and it may be applied to boolean and
-nullable values.
+Like `shouldBe`, it expects both sides of the comparison to be the same type, and it may be applied to boolean, array
+and nullable values.
 
 ### `shouldBe` with Predicate
 
@@ -310,7 +316,7 @@ usual.
 
 ## Dependency Specification
 
-The latest version of the library is 4.1, and it may be obtained from the Maven Central repository.
+The latest version of the library is 4.2, and it may be obtained from the Maven Central repository.
 (The following dependency declarations assume that the library will be included for test purposes; this is
 expected to be its principal use.)
 
@@ -319,17 +325,17 @@ expected to be its principal use.)
     <dependency>
       <groupId>io.kstuff</groupId>
       <artifactId>should-test</artifactId>
-      <version>4.1</version>
+      <version>4.2</version>
       <scope>test</scope>
     </dependency>
 ```
 ### Gradle
 ```groovy
-    testImplementation 'io.kstuff:should-test:4.1'
+    testImplementation 'io.kstuff:should-test:4.2'
 ```
 ### Gradle (kts)
 ```kotlin
-    testImplementation("io.kstuff:should-test:4.1")
+    testImplementation("io.kstuff:should-test:4.2")
 ```
 
 Peter Wall
