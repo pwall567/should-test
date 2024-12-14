@@ -2,6 +2,10 @@
 
 The format is based on [Keep a Changelog](http://keepachangelog.com/).
 
+## [4.1] - 2024-12-14
+### Changed
+- `GenericTests`: added `shouldBeEqual` and `shouldNotBeEqual`
+
 ## [4.0] - 2024-12-10
 ### Added
 - `ErrorMessages`: split messages out into separate object (so they can be shared)

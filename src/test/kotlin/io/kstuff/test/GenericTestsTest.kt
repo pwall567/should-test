@@ -214,6 +214,28 @@ class GenericTestsTest {
         }
     }
 
+    @Test fun `should compare using inferred type`() {
+        shouldBeEqual(listOf(), emptyList<String>())
+    }
+
+    @Suppress("ComplexRedundantLet")
+    @Test fun `should throw AssertionError when shouldBeEqual fails`() {
+        assertFailsWith<AssertionError> { shouldBeEqual(listOf(), listOf("abc")) }.let {
+            assertEquals("Value should be [ ], was [ \"abc\" ]", it.message)
+        }
+    }
+
+    @Test fun `should compare not equal using inferred type`() {
+        shouldNotBeEqual(listOf(), listOf("abc"))
+    }
+
+    @Suppress("ComplexRedundantLet")
+    @Test fun `should throw AssertionError when shouldNotBeEqual fails`() {
+        assertFailsWith<AssertionError> { shouldNotBeEqual(listOf(), emptyList<String>()) }.let {
+            assertEquals("Value should not be [ ]", it.message)
+        }
+    }
+
     @Suppress("ConstPropertyName")
     companion object {
 

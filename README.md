@@ -156,6 +156,28 @@ It also returns the type-checked value that may be used in a chained test:
     testValue.shouldBeType<String>().length shouldBe 8
 ```
 
+### `shouldBeEqual`
+
+There is a problem with the `shouldBe` syntax.
+As the LHS (the actual value) is being evaluated, the RHS (the expected value) is still unknown, so type inference can
+not be used to infer the type of the LHS.
+
+Suppose you have a function that returns a `List` of a generic type; when testing the result of this function, the older
+`assertEquals` function would allow type inference to be used to determine the type of the result.
+Where type inference is not available, the type must be specified in full, and that can be tedious if the actual type is
+complex:
+```kotlin
+    testFunction<List<Pair<String, Int>>>() shouldBe listOf("name" to 123)
+```
+
+The `shouldBeEqual` function allows the use of type inference to determine the inferred type, but of course it loses the
+advantage of the infix syntax.
+```kotlin
+    shouldBeEqual(listOf("name" to 123), testFunction())
+```
+
+The `shouldNotBeEqual` function is the complement to the `shouldBeEqual` function.
+
 ## Collection Tests
 
 ### `shouldContain` and `shouldNotContain`
@@ -288,7 +310,7 @@ usual.
 
 ## Dependency Specification
 
-The latest version of the library is 4.0, and it may be obtained from the Maven Central repository.
+The latest version of the library is 4.1, and it may be obtained from the Maven Central repository.
 (The following dependency declarations assume that the library will be included for test purposes; this is
 expected to be its principal use.)
 
@@ -297,19 +319,19 @@ expected to be its principal use.)
     <dependency>
       <groupId>io.kstuff</groupId>
       <artifactId>should-test</artifactId>
-      <version>4.0</version>
+      <version>4.1</version>
       <scope>test</scope>
     </dependency>
 ```
 ### Gradle
 ```groovy
-    testImplementation 'io.kstuff:should-test:4.0'
+    testImplementation 'io.kstuff:should-test:4.1'
 ```
 ### Gradle (kts)
 ```kotlin
-    testImplementation("io.kstuff:should-test:4.0")
+    testImplementation("io.kstuff:should-test:4.1")
 ```
 
 Peter Wall
 
-2024-12-10
+2024-12-14

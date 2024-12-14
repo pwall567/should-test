@@ -169,3 +169,19 @@ import io.kstuff.test.ErrorMessages.errorShouldThrowWithMessage
     contract { returns() implies (this@shouldBeType is T) }
     return if (this is T) this else asserter.fail(errorShouldBeType(T::class, this))
 }
+
+/**
+ * Test that value is equal to expected, allowing use of type inference.
+ */
+@InlineOnly fun <@OnlyInputTypes T> shouldBeEqual(expected: T, actual: T) {
+    if (actual != expected)
+        asserter.fail(errorShouldBe(expected, actual))
+}
+
+/**
+ * Test that value is not equal to expected, allowing use of type inference.
+ */
+@InlineOnly fun <@OnlyInputTypes T> shouldNotBeEqual(expected: T, actual: T) {
+    if (actual == expected)
+        asserter.fail(errorShouldNotBe(expected))
+}
