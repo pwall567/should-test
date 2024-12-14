@@ -188,7 +188,8 @@ The `shouldNotBeEqual` function is the complement to the `shouldBeEqual` functio
 
 ### `shouldContain` and `shouldNotContain`
 
-Tests that a collection (an `Iterable`,  _e.g._ a `List`, `Set` _etc._) contains (or does not contain) a given value:
+Tests that a collection (an `Iterable`,  _e.g._ a `List`, `Set` _etc._) or an array (including `IntArray` _etc._)
+contains (or does not contain) a given value:
 ```kotlin
     testList shouldContain "alpha"
 ```
@@ -316,7 +317,7 @@ usual.
 
 ## Dependency Specification
 
-The latest version of the library is 4.2, and it may be obtained from the Maven Central repository.
+The latest version of the library is 4.3, and it may be obtained from the Maven Central repository.
 (The following dependency declarations assume that the library will be included for test purposes; this is
 expected to be its principal use.)
 
@@ -325,19 +326,19 @@ expected to be its principal use.)
     <dependency>
       <groupId>io.kstuff</groupId>
       <artifactId>should-test</artifactId>
-      <version>4.2</version>
+      <version>4.3</version>
       <scope>test</scope>
     </dependency>
 ```
 ### Gradle
 ```groovy
-    testImplementation 'io.kstuff:should-test:4.2'
+    testImplementation 'io.kstuff:should-test:4.3'
 ```
 ### Gradle (kts)
 ```kotlin
-    testImplementation("io.kstuff:should-test:4.2")
+    testImplementation("io.kstuff:should-test:4.3")
 ```
 
 Peter Wall
 
-2024-12-14
+2024-12-15

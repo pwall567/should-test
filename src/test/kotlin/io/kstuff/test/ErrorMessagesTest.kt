@@ -68,6 +68,16 @@ class ErrorMessagesTest {
         assertEquals("-123456789123456789L", buildString { appendValue(-123456789123456789) })
     }
 
+    @Test fun `should append value for Double`() {
+        assertEquals("1.0", buildString { appendValue(1.0) })
+        assertEquals("10.5", buildString { appendValue(10.5) })
+    }
+
+    @Test fun `should append value for Float`() {
+        assertEquals("5.0F", buildString { appendValue(5.0F) })
+        assertEquals("1.5F", buildString { appendValue(1.5F) })
+    }
+
     @Test fun `should append value for Char`() {
         assertEquals("'A'", buildString { appendValue('A') })
         assertEquals("'\"'", buildString { appendValue('"') })

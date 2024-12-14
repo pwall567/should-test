@@ -147,6 +147,10 @@ object ErrorMessages {
                 append(value.toString())
                 append('L')
             }
+            value is Float -> {
+                append(value.toString())
+                append('F')
+            }
             value is Collection<*> -> appendItems(value.iterator(), maxItems = maxItems)
             value is Map<*, *> -> {
                 append('{')
