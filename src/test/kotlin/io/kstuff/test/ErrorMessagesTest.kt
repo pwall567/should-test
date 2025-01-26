@@ -33,6 +33,7 @@ import io.kstuff.test.ErrorMessages.errorShouldBe
 import io.kstuff.test.ErrorMessages.errorShouldBePredicate
 import io.kstuff.test.ErrorMessages.errorShouldNotBe
 import io.kstuff.test.ErrorMessages.errorShouldNotBePredicate
+import io.kstuff.test.NamedPredicateTest.Companion.even
 
 class ErrorMessagesTest {
 
@@ -45,11 +46,19 @@ class ErrorMessagesTest {
     }
 
     @Test fun `should create should-be-predicate error message`() {
-        assertEquals("Value should match predicate, was 100", errorShouldBePredicate<Int>(100) { false })
+        assertEquals("Value should match predicate, was 100", errorShouldBePredicate(100))
+    }
+
+    @Test fun `should create should-be-predicate error message for NamedPredicate`() {
+        assertEquals("Value should be even, was 99", errorShouldBePredicate(99, even))
     }
 
     @Test fun `should create should-not-be-predicate error message`() {
-        assertEquals("Value should not match predicate, was 100", errorShouldNotBePredicate<Int>(100) { true })
+        assertEquals("Value should not match predicate, was 100", errorShouldNotBePredicate(100))
+    }
+
+    @Test fun `should create should-not-be-predicate error message for NamedPredicate`() {
+        assertEquals("Value should not be even, was 100", errorShouldNotBePredicate(100, even))
     }
 
     @Test fun `should append value for null`() {

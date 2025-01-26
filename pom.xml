@@ -5,7 +5,7 @@
 
   <groupId>io.kstuff</groupId>
   <artifactId>should-test</artifactId>
-  <version>4.3</version>
+  <version>4.4</version>
   <name>Kotlin testing functions</name>
   <description>Functions to simplify testing of Kotlin projects</description>
   <packaging>jar</packaging>
@@ -14,8 +14,8 @@
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <java.version>1.8</java.version>
-    <kotlin.version>1.9.24</kotlin.version>
-    <dokka.version>1.9.20</dokka.version>
+    <kotlin.version>2.0.21</kotlin.version>
+    <dokka.version>2.0.0</dokka.version>
     <!-- Stop IntelliJ doing stupid things with Java version! -->
     <maven.compiler.source>${java.version}</maven.compiler.source>
     <maven.compiler.target>${java.version}</maven.compiler.target>
@@ -88,8 +88,8 @@
         <version>${kotlin.version}</version>
         <configuration>
           <jvmTarget>${java.version}</jvmTarget>
-          <languageVersion>1.9</languageVersion>
-          <apiVersion>1.9</apiVersion>
+          <languageVersion>2.0</languageVersion>
+          <apiVersion>2.0</apiVersion>
         </configuration>
         <executions>
           <execution>
@@ -129,7 +129,7 @@
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-source-plugin</artifactId>
-        <version>3.3.0</version>
+        <version>3.3.1</version>
         <executions>
           <execution>
             <id>attach-sources</id>

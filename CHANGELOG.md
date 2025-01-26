@@ -2,6 +2,12 @@
 
 The format is based on [Keep a Changelog](http://keepachangelog.com/).
 
+## [4.4] - 2025-01-26
+### Changed
+- `pom.xml`: updated Kotlin version to 2.0.21
+- `GenericTests`, `CombinedTests`: fixed incorrect use of contract
+- `ErrorMessages`: new messages for above fixes
+
 ## [4.3] - 2024-12-15
 ### Changed
 - `ArrayTests`: added `shouldBeEqual` and `shouldNotBeEqual` comparisons on arrays

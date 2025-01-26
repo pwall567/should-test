@@ -60,7 +60,15 @@ import io.kstuff.test.ErrorMessages.errorShouldThrowWithMessage
  */
 @OptIn(ExperimentalContracts::class)
 @InlineOnly infix fun <@OnlyInputTypes T> T.shouldBe(predicate: (T) -> Boolean) {
-    contract { callsInPlace(predicate, InvocationKind.EXACTLY_ONCE) }
+    contract { callsInPlace(predicate, InvocationKind.AT_MOST_ONCE) }
+    if (!predicate(this))
+        asserter.fail(errorShouldBePredicate(this))
+}
+
+/**
+ * Test that predicate applied to the value returns `true`.
+ */
+@InlineOnly infix fun <@OnlyInputTypes T> T.shouldBe(predicate: NamedPredicate<T>) {
     if (!predicate(this))
         asserter.fail(errorShouldBePredicate(this, predicate))
 }
@@ -78,7 +86,15 @@ import io.kstuff.test.ErrorMessages.errorShouldThrowWithMessage
  */
 @OptIn(ExperimentalContracts::class)
 @InlineOnly infix fun <@OnlyInputTypes T> T.shouldNotBe(predicate: (T) -> Boolean) {
-    contract { callsInPlace(predicate, InvocationKind.EXACTLY_ONCE) }
+    contract { callsInPlace(predicate, InvocationKind.AT_MOST_ONCE) }
+    if (predicate(this))
+        asserter.fail(errorShouldNotBePredicate(this))
+}
+
+/**
+ * Test that predicate applied to the value returns `false`.
+ */
+@InlineOnly infix fun <@OnlyInputTypes T> T.shouldNotBe(predicate: NamedPredicate<T>) {
     if (predicate(this))
         asserter.fail(errorShouldNotBePredicate(this, predicate))
 }
@@ -120,7 +136,7 @@ import io.kstuff.test.ErrorMessages.errorShouldThrowWithMessage
  */
 @OptIn(ExperimentalContracts::class)
 @InlineOnly inline fun <reified T : Throwable> shouldThrow(block: () -> Unit): T {
-    contract { callsInPlace(block, InvocationKind.EXACTLY_ONCE) }
+    contract { callsInPlace(block, InvocationKind.AT_MOST_ONCE) }
     try {
         block()
     }
@@ -137,7 +153,7 @@ import io.kstuff.test.ErrorMessages.errorShouldThrowWithMessage
  */
 @OptIn(ExperimentalContracts::class)
 @InlineOnly inline fun <reified T : Throwable> shouldThrow(message: String, block: () -> Unit): T {
-    contract { callsInPlace(block, InvocationKind.EXACTLY_ONCE) }
+    contract { callsInPlace(block, InvocationKind.AT_MOST_ONCE) }
     try {
         block()
     }

@@ -44,23 +44,25 @@ object ErrorMessages {
         appendValue(actual)
     }
 
-    internal fun <T> errorShouldBePredicate(actual: Any?, predicate: (T) -> Boolean) = buildString {
-        if (predicate is NamedPredicate<*>) {
-            append(valueShouldBe)
-            append(predicate.name)
-        }
-        else
-            append("Value should match predicate")
+    internal fun errorShouldBePredicate(actual: Any?) = buildString {
+        append("Value should match predicate")
         appendWas(actual)
     }
 
-    internal fun <T> errorShouldNotBePredicate(actual: Any?, predicate: (T) -> Boolean) = buildString {
-        if (predicate is NamedPredicate<*>) {
-            append(valueShouldNotBe)
-            append(predicate.name)
-        }
-        else
-            append("Value should not match predicate")
+    internal fun <T> errorShouldBePredicate(actual: Any?, predicate: NamedPredicate<T>) = buildString {
+        append(valueShouldBe)
+        append(predicate.name)
+        appendWas(actual)
+    }
+
+    internal fun errorShouldNotBePredicate(actual: Any?) = buildString {
+        append("Value should not match predicate")
+        appendWas(actual)
+    }
+
+    internal fun <T> errorShouldNotBePredicate(actual: Any?, predicate: NamedPredicate<T>) = buildString {
+        append(valueShouldNotBe)
+        append(predicate.name)
         appendWas(actual)
     }
 

@@ -59,7 +59,15 @@ class CombinedTests {
      */
     @OptIn(ExperimentalContracts::class)
     @InlineOnly infix fun <@OnlyInputTypes T> T.shouldBe(predicate: (T) -> Boolean) {
-        contract { callsInPlace(predicate, InvocationKind.EXACTLY_ONCE) }
+        contract { callsInPlace(predicate, InvocationKind.AT_MOST_ONCE) }
+        if (!predicate(this))
+            fail(errorShouldBePredicate(this))
+    }
+
+    /**
+     * Test that [NamedPredicate] applied to the value returns `true`.
+     */
+    @InlineOnly infix fun <@OnlyInputTypes T> T.shouldBe(predicate: NamedPredicate<T>) {
         if (!predicate(this))
             fail(errorShouldBePredicate(this, predicate))
     }
@@ -77,7 +85,15 @@ class CombinedTests {
      */
     @OptIn(ExperimentalContracts::class)
     @InlineOnly infix fun <@OnlyInputTypes T> T.shouldNotBe(predicate: (T) -> Boolean) {
-        contract { callsInPlace(predicate, InvocationKind.EXACTLY_ONCE) }
+        contract { callsInPlace(predicate, InvocationKind.AT_MOST_ONCE) }
+        if (predicate(this))
+            fail(errorShouldNotBePredicate(this))
+    }
+
+    /**
+     * Test that predicate applied to the value returns `false`.
+     */
+    @InlineOnly infix fun <@OnlyInputTypes T> T.shouldNotBe(predicate: NamedPredicate<T>) {
         if (predicate(this))
             fail(errorShouldNotBePredicate(this, predicate))
     }
