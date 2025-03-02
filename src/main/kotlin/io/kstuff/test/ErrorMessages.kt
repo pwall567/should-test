@@ -2,7 +2,7 @@
  * @(#) ErrorMessages.kt
  *
  * should-test  Kotlin testing functions
- * Copyright (c) 2024 Peter Wall
+ * Copyright (c) 2024, 2025 Peter Wall
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -109,6 +109,15 @@ object ErrorMessages {
         append("Should throw with message ")
         appendValue(expected)
         appendWas(actual)
+    }
+
+    @PublishedApi
+    internal fun errorShouldNotThrow(expectedClass: KClass<*>, message: String?) = buildString {
+        append("Should not throw ")
+        append(expectedClass.simplifyName())
+        append(':')
+        append(' ')
+        append(message)
     }
 
     @PublishedApi

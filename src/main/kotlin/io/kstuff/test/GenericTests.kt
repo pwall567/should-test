@@ -2,7 +2,7 @@
  * @(#) GenericTests.kt
  *
  * should-test  Kotlin testing functions
- * Copyright (c) 2024 Peter Wall
+ * Copyright (c) 2024, 2025 Peter Wall
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -43,6 +43,7 @@ import io.kstuff.test.ErrorMessages.errorShouldNotBe
 import io.kstuff.test.ErrorMessages.errorShouldNotBeOneOf
 import io.kstuff.test.ErrorMessages.errorShouldNotBePredicate
 import io.kstuff.test.ErrorMessages.errorShouldNotBeSameInstance
+import io.kstuff.test.ErrorMessages.errorShouldNotThrow
 import io.kstuff.test.ErrorMessages.errorShouldThrowButCompleted
 import io.kstuff.test.ErrorMessages.errorShouldThrowButThrew
 import io.kstuff.test.ErrorMessages.errorShouldThrowWithMessage
@@ -66,7 +67,7 @@ import io.kstuff.test.ErrorMessages.errorShouldThrowWithMessage
 }
 
 /**
- * Test that predicate applied to the value returns `true`.
+ * Test that [NamedPredicate] applied to the value returns `true`.
  */
 @InlineOnly infix fun <@OnlyInputTypes T> T.shouldBe(predicate: NamedPredicate<T>) {
     if (!predicate(this))
@@ -92,7 +93,7 @@ import io.kstuff.test.ErrorMessages.errorShouldThrowWithMessage
 }
 
 /**
- * Test that predicate applied to the value returns `false`.
+ * Test that [NamedPredicate] applied to the value returns `false`.
  */
 @InlineOnly infix fun <@OnlyInputTypes T> T.shouldNotBe(predicate: NamedPredicate<T>) {
     if (predicate(this))
@@ -166,6 +167,22 @@ import io.kstuff.test.ErrorMessages.errorShouldThrowWithMessage
         asserter.fail(errorShouldThrowButThrew(T::class, t::class))
     }
     asserter.fail(errorShouldThrowButCompleted(T::class))
+}
+
+/**
+ * Test that a [Throwable] of the specified type is NOT thrown in a given block of code.
+ */
+@OptIn(ExperimentalContracts::class)
+@InlineOnly inline fun <reified T : Throwable> shouldNotThrow(block: () -> Unit) {
+    contract { callsInPlace(block, InvocationKind.AT_MOST_ONCE) }
+    try {
+        block()
+    }
+    catch (t: Throwable) {
+        if (t is T)
+            asserter.fail(errorShouldNotThrow(T::class, t.message))
+        throw t
+    }
 }
 
 /**

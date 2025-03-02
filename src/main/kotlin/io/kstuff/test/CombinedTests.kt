@@ -91,7 +91,7 @@ class CombinedTests {
     }
 
     /**
-     * Test that predicate applied to the value returns `false`.
+     * Test that [NamedPredicate] applied to the value returns `false`.
      */
     @InlineOnly infix fun <@OnlyInputTypes T> T.shouldNotBe(predicate: NamedPredicate<T>) {
         if (predicate(this))

@@ -2,6 +2,11 @@
 
 The format is based on [Keep a Changelog](http://keepachangelog.com/).
 
+## [4.5] - 2025-03-02
+### Changed
+- `GenericTests`: added `shouldNotThrow`
+- `ErrorMessages`: new message for above
+
 ## [4.4] - 2025-01-26
 ### Changed
 - `pom.xml`: updated Kotlin version to 2.0.21

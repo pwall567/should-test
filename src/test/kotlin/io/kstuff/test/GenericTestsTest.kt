@@ -2,7 +2,7 @@
  * @(#) GenericTestsTest.kt
  *
  * should-test  Kotlin testing functions
- * Copyright (c) 2024 Peter Wall
+ * Copyright (c) 2024, 2025 Peter Wall
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -28,6 +28,7 @@ package io.kstuff.test
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertFailsWith
+import kotlin.test.assertTrue
 
 class GenericTestsTest {
 
@@ -176,6 +177,20 @@ class GenericTestsTest {
             shouldThrow<RuntimeException>("Something went wrong") { throw RuntimeException("Bad message") }
         }.let {
             assertEquals("Should throw with message \"Something went wrong\", was \"Bad message\"", it.message)
+        }
+    }
+
+    @Test fun `should perform shouldNotThrow`() {
+        shouldNotThrow<NumberFormatException> { "123".toInt() }
+    }
+
+    @Test fun `should throw AssertionError when shouldNotThrow fails`() {
+        assertFailsWith<AssertionError> {
+            shouldNotThrow<NumberFormatException> { "bad".toInt() }
+        }.message.let {
+            assertTrue(it != null)
+            assertTrue(it.startsWith("Should not throw NumberFormatException: "))
+            assertTrue(it.contains("bad"))
         }
     }
 
